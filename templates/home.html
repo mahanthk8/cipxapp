@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class="text-center">
+    <h1 class="mb-4">Welcome to Community Issue Portal</h1>
+    <p class="lead">
+        Raise complaints, track progress, and help improve your community.
+    </p>
+
+    <div class="mt-4">
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3">
+            Raise a Complaint
+        </a>
+        <a href="{% url 'tracking' %}" class="btn btn-outline-dark btn-lg">
+            Track Complaint
+        </a>
+    </div>
+</div>
+
+<hr class="my-5">
+
+<div class="row text-center">
+    <div class="col-md-4">
+        <h4>Transparent Process</h4>
+        <p>Track complaints in real-time.</p>
+    </div>
+    <div class="col-md-4">
+        <h4>Efficient Officers</h4>
+        <p>Assigned region-wise for quick resolution.</p>
+    </div>
+    <div class="col-md-4">
+        <h4>Community Empowerment</h4>
+        <p>Privileged users can influence urgent actions.</p>
+    </div>
+</div>
+
+{% endblock %}

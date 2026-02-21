@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Update Profile</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label>Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+                <label>Email</label>
+                {{ form.email }}
+            </div>
+
+            <div class="mb-3">
+                <label>Phone</label>
+                {{ form.phone }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Update Profile
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

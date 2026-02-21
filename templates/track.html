@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Track Complaint{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Track Your Complaint</h2>
+
+<form method="post" class="card p-4 shadow-sm">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Complaint ID</label>
+        <input type="text" name="complaint_id" class="form-control" placeholder="CMPC12345678" required>
+    </div>
+    <button class="btn btn-primary">Track</button>
+</form>
+
+{% if complaint %}
+<div class="card mt-4 shadow-sm">
+    <div class="card-body">
+        <h5>{{ complaint.complaintId }}</h5>
+        <p><strong>Status:</strong> 
+            <span class="badge bg-info">{{ complaint.status }}</span>
+        </p>
+        <p><strong>Category:</strong> {{ complaint.category }}</p>
+        <p><strong>Remarks:</strong> {{ complaint.remarks }}</p>
+        <p><strong>Last Updated:</strong> {{ complaint.updated_at }}</p>
+    </div>
+</div>
+{% elif error %}
+<div class="alert alert-danger mt-4">
+    {{ error }}
+</div>
+{% endif %}
+
+{% endblock %}

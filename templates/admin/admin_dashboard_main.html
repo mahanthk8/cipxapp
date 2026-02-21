@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<!-- ================= MANAGEMENT SECTION ================= -->
+<h4 class="mb-3">Management</h4>
+
+<div class="row mb-5">
+
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+                <h5>Region Management</h5>
+                <p>Manage and monitor all regions</p>
+                <a href="{% url 'region_list' %}" class="btn btn-primary btn-sm">Manage Regions</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+                <h5>Officer Management</h5>
+                <p>Add, update and assign officers</p>
+                <a href="{% url 'officer_list' %}" class="btn btn-warning btn-sm">Manage Officers</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+                <h5>Complaint Management</h5>
+                <p>View and manage all complaints</p>
+                <a href="{% url 'admin_complaint_list' %}" class="btn btn-success btn-sm">Manage Complaints</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= ANALYTICS SECTION ================= -->
+<h4 class="mb-3">Analytics</h4>
+
+<!-- KPI CARDS -->
+<div class="row mb-4">
+
+    <div class="col-md-3">
+        <div class="card bg-dark text-white shadow">
+            <div class="card-body">
+                <h5>Total Complaints</h5>
+                <h3>{{ total_complaints }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark shadow">
+            <div class="card-body">
+                <h5>Pending</h5>
+                <h3>{{ pending_count }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-info text-white shadow">
+            <div class="card-body">
+                <h5>In Process</h5>
+                <h3>{{ in_process_count }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-success text-white shadow">
+            <div class="card-body">
+                <h5>Completed</h5>
+                <h3>{{ completed_count }}</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Total Officers: {{ total_officers }}</h5>
+                <h5>Total Regions: {{ total_regions }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CHARTS -->
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Complaints by Status</h5>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Complaints by Region</h5>
+                <canvas id="regionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Officer Workload</h5>
+                <canvas id="officerChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // Status Chart
+    new Chart(document.getElementById("statusChart"), {
+        type: 'bar',
+        data: {
+            labels: {{ status_labels|safe }},
+            datasets: [{
+                label: 'Complaints',
+                data: {{ status_counts|safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {}
+    });
+
+    // Region Chart
+    new Chart(document.getElementById("regionChart"), {
+        type: 'bar',
+        data: {
+            labels: {{ region_labels|safe }},
+            datasets: [{
+                label: 'Complaints',
+                data: {{ region_counts|safe }},
+                backgroundColor: 'rgba(255, 99, 132, 0.6)'
+            }]
+        },
+        options: {}
+    });
+
+    // Officer Chart
+    new Chart(document.getElementById("officerChart"), {
+        type: 'bar',
+        data: {
+            labels: {{ officer_labels|safe }},
+            datasets: [{
+                label: 'Assigned Complaints',
+                data: {{ officer_counts|safe }},
+                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            }]
+        },
+        options: {}
+    });
+
+</script>
+
+{% endblock %}

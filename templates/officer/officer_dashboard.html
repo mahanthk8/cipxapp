@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Assigned Complaints</h2>
+
+<table class="table table-bordered bg-white shadow-sm">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in complaints %}
+        <tr>
+            <td>{{ c.complaintId }}</td>
+            <td>{{ c.title }}</td>
+            <td>{{ c.status }}</td>
+            <td>
+                <a href="{% url 'view_complaint' c.complaintId %}" class="btn btn-secondary btn-sm">
+                    View
+                </a>
+                <a href="{% url 'officer_update_complaint' c.pk %}" class="btn btn-sm btn-primary">
+                    Update
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

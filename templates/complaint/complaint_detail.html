@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Complaint Detail</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <h5 class="mb-3">
+            {{ complaint.complaintId }}
+        </h5>
+
+        <p><strong>Title:</strong> {{ complaint.title }}</p>
+        <p><strong>Description:</strong> {{ complaint.description }}</p>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Region:</strong> {{ complaint.region.name }}</p>
+                <p><strong>Category:</strong> {{ complaint.category }}</p>
+                <p><strong>Status:</strong>
+                    <span class="badge bg-primary">
+                        {{ complaint.status }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <p><strong>Created By:</strong>
+                    {{ complaint.created_by.username }}
+                </p>
+                <p><strong>Assigned To:</strong>
+                    {% if complaint.assigned_to %}
+                        {{ complaint.assigned_to.username }}
+                    {% else %}
+                        Not Assigned
+                    {% endif %}
+                </p>
+                <p><strong>Last Action By:</strong>
+                    {% if complaint.action_by %}
+                        {{ complaint.action_by.username }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        {% if complaint.remarks %}
+        <hr>
+        <p><strong>Latest Remarks:</strong></p>
+        <div class="alert alert-secondary">
+            {{ complaint.remarks }}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% if complaint.complaint_image %}
+<hr>
+<p><strong>Complaint Image:</strong></p>
+<img src="{{ complaint.complaint_image.url }}"
+     class="img-fluid rounded shadow-sm"
+     width="400">
+{% endif %}
+
+{% if complaint.resolution_image %}
+<hr>
+<p><strong>Resolution Image:</strong></p>
+<img src="{{ complaint.resolution_image.url }}"
+     class="img-fluid rounded shadow-sm"
+     width="400">
+{% endif %}
+
+<!-- AUDIT LOG SECTION -->
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+        Audit History
+    </div>
+
+    <div class="card-body">
+
+        {% for log in audit_logs %}
+        <div class="mb-3 border-bottom pb-2">
+            <p>
+                <strong>{{ log.changed_by.username }}</strong>
+                <span class="text-muted">
+                    ({{ log.timestamp }})
+                </span>
+            </p>
+            <p>{{ log.change_description }}</p>
+        </div>
+        {% empty %}
+        <p>No audit history available.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

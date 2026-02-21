@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Admin Analytics Dashboard</h2>
+
+<!-- SUMMARY CARDS -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h5>Total Complaints</h5>
+                <h2>{{ total_complaints }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">Complaints by Status</div>
+            <div class="card-body">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">Complaints by Region</div>
+            <div class="card-body">
+                <canvas id="regionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header">Officer Workload</div>
+            <div class="card-body">
+                <canvas id="officerChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const statusData = {{ status_data|safe }};
+    const regionData = {{ region_data|safe }};
+    const officerData = {{ officer_data|safe }};
+
+    new Chart(document.getElementById('statusChart'), {
+        type: 'pie',
+        data: {
+            labels: statusData.map(item => item.status),
+            datasets: [{
+                data: statusData.map(item => item.count),
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('regionChart'), {
+        type: 'bar',
+        data: {
+            labels: regionData.map(item => item.region__name),
+            datasets: [{
+                label: 'Complaints',
+                data: regionData.map(item => item.count),
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('officerChart'), {
+        type: 'bar',
+        data: {
+            labels: officerData.map(item => item.assigned_to__username),
+            datasets: [{
+                label: 'Assigned Complaints',
+                data: officerData.map(item => item.count),
+            }]
+        }
+    });
+</script>
+
+{% endblock %}

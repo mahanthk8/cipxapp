@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Update Complaint: {{ complaint.complaintId }}</h3>
+
+<form method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+    {% csrf_token %}
+
+    <select name="status" class="form-control mb-3">
+        <option value="IN_PROCESS">In Process</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="REJECTED">Rejected</option>
+    </select>
+
+    <textarea name="remarks" class="form-control mb-3"
+              placeholder="Add remarks"></textarea>
+
+    <div class="mb-3">
+        <label>Upload Resolution Image</label>
+        {{ form.resolution_image }}
+    </div>
+
+    <button class="btn btn-success">Update</button>
+</form>
+
+{% endblock %}

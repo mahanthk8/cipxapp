@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Regions</h2>
+
+<a href="{% url 'region_create' %}" class="btn btn-primary mb-3">
+    + Create Region
+</a>
+
+<table class="table table-bordered bg-white shadow-sm">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Region ID</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in regions %}
+        <tr>
+            <td>{{ r.name }}</td>
+            <td>{{ r.regionId }}</td>
+            <td>
+                {% if r.is_active %}
+                    <span class="badge bg-success">Active</span>
+                {% else %}
+                    <span class="badge bg-danger">Inactive</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'region_update' r.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'region_delete' r.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No regions created yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
