@@ -1,203 +1,346 @@
 {% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
 {% block content %}
 
-<h2 class="mb-4">Admin Dashboard</h2>
-
-<!-- ================= MANAGEMENT SECTION ================= -->
-<h4 class="mb-3">Management</h4>
-
-<div class="row mb-5">
-
-    <div class="col-md-4">
-        <div class="card shadow border-0">
-            <div class="card-body text-center">
-                <h5>Region Management</h5>
-                <p>Manage and monitor all regions</p>
-                <a href="{% url 'region_list' %}" class="btn btn-primary btn-sm">Manage Regions</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card shadow border-0">
-            <div class="card-body text-center">
-                <h5>Officer Management</h5>
-                <p>Add, update and assign officers</p>
-                <a href="{% url 'officer_list' %}" class="btn btn-warning btn-sm">Manage Officers</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card shadow border-0">
-            <div class="card-body text-center">
-                <h5>Complaint Management</h5>
-                <p>View and manage all complaints</p>
-                <a href="{% url 'admin_complaint_list' %}" class="btn btn-success btn-sm">Manage Complaints</a>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- ================= ANALYTICS SECTION ================= -->
-<h4 class="mb-3">Analytics</h4>
-
-<!-- KPI CARDS -->
 <div class="row mb-4">
-
-    <div class="col-md-3">
-        <div class="card bg-dark text-white shadow">
-            <div class="card-body">
-                <h5>Total Complaints</h5>
-                <h3>{{ total_complaints }}</h3>
-            </div>
-        </div>
+    <div class="col">
+        <h2 class="display-6 fw-bold text-primary">
+            <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+        </h2>
+        <p class="text-muted">Monitor and manage community complaints with AI-powered insights</p>
     </div>
-
-    <div class="col-md-3">
-        <div class="card bg-warning text-dark shadow">
-            <div class="card-body">
-                <h5>Pending</h5>
-                <h3>{{ pending_count }}</h3>
-            </div>
-        </div>
+    <div class="col-auto">
+        <a href="{% url 'create_complaint' %}" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i>New Complaint
+        </a>
     </div>
-
-    <div class="col-md-3">
-        <div class="card bg-info text-white shadow">
-            <div class="card-body">
-                <h5>In Process</h5>
-                <h3>{{ in_process_count }}</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card bg-success text-white shadow">
-            <div class="card-body">
-                <h5>Completed</h5>
-                <h3>{{ completed_count }}</h3>
-            </div>
-        </div>
-    </div>
-
 </div>
 
+<!-- Management Section -->
 <div class="row mb-5">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white shadow">
-            <div class="card-body">
-                <h3>Total Officers: {{ total_officers }}</h3>
-                <h3>Total Regions: {{ total_regions }}</h3>
+    <div class="col-md-4 mb-4">
+        <div class="card dashboard-card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-map-marked-alt text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">Region Management</h5>
+                <p class="card-text">Manage and monitor all regions with geographic insights</p>
+                <a href="{% url 'region_list' %}" class="btn btn-primary">
+                    <i class="fas fa-cog me-2"></i>Manage Regions
+                </a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card bg-danger text-white shadow">
+    <div class="col-md-4 mb-4">
+        <div class="card dashboard-card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-tie text-warning" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">Officer Management</h5>
+                <p class="card-text">Add, update and assign officers with performance tracking</p>
+                <a href="{% url 'officer_list' %}" class="btn btn-warning">
+                    <i class="fas fa-users me-2"></i>Manage Officers
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card dashboard-card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-clipboard-list text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">Complaint Management</h5>
+                <p class="card-text">View and manage all complaints with ML predictions</p>
+                <a href="{% url 'admin_complaint_list' %}" class="btn btn-success">
+                    <i class="fas fa-tasks me-2"></i>Manage Complaints
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Section -->
+<h4 class="mb-4 fw-bold">
+    <i class="fas fa-chart-bar me-2"></i>Analytics Overview
+</h4>
+
+<!-- KPI Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card stats-card">
             <div class="card-body">
-                <h3>Priority Distribution</h3>
-                <ul>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Total Complaints</h6>
+                        <h3 class="mb-0 fw-bold">{{ total_complaints }}</h3>
+                    </div>
+                    <div>
+                                                <i class="fas fa-clipboard-list fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Pending</h6>
+                        <h3 class="mb-0 fw-bold">{{ pending_count }}</h3>
+                    </div>
+                    <div>
+                        <i class="fas fa-clock fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">In Process</h6>
+                        <h3 class="mb-0 fw-bold">{{ in_process_count }}</h3>
+                    </div>
+                    <div>
+                        <i class="fas fa-cog fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1">Completed</h6>
+                        <h3 class="mb-0 fw-bold">{{ completed_count }}</h3>
+                    </div>
+                    <div>
+                        <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Stats -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-3">System Overview</h6>
+                <h4 class="mb-2">Total Officers: {{ total_officers }}</h4>
+                <h4 class="mb-0">Total Regions: {{ total_regions }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h6 class="text-uppercase mb-3">Priority Distribution</h6>
+                <ul class="list-unstyled mb-0">
                     {% for item in priority_stats %}
-                        <li>{{ item.priority }} : {{ item.total }}</li>
+                        <li class="d-flex justify-content-between mb-1">
+                            <span>{{ item.priority }}</span>
+                            <strong>{{ item.total }}</strong>
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-secondary text-white shadow">
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-secondary text-white">
             <div class="card-body">
-                <h3>Season Distribution</h3>
-                <ul>
-                {% for item in season_stats %}
-                    <li>{{ item.season_tag }} : {{ item.total }}</li>
-                {% endfor %}
+                <h6 class="text-uppercase mb-3">Season Distribution</h6>
+                <ul class="list-unstyled mb-0">
+                    {% for item in season_stats %}
+                        <li class="d-flex justify-content-between mb-1">
+                            <span>{{ item.season_tag }}</span>
+                            <strong>{{ item.total }}</strong>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
 </div>
 
-<!-- CHARTS -->
-<div class="row">
-
-    <div class="col-md-6">
+<!-- Charts Section -->
+<div class="row mb-4">
+    <div class="col-lg-6 mb-4">
         <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar text-primary me-2"></i>Complaints by Status
+                </h5>
+            </div>
             <div class="card-body">
-                <h5>Complaints by Status</h5>
-                <canvas id="statusChart"></canvas>
+                <canvas id="statusChart" height="300"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-lg-6 mb-4">
         <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-pie text-success me-2"></i>Complaints by Region
+                </h5>
+            </div>
             <div class="card-body">
-                <h5>Complaints by Region</h5>
-                <canvas id="regionChart"></canvas>
+                <canvas id="regionChart" height="300"></canvas>
             </div>
         </div>
     </div>
-
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-12">
+<div class="row mb-4">
+    <div class="col-12">
         <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line text-info me-2"></i>Officer Workload Analysis
+                </h5>
+            </div>
             <div class="card-body">
-                <h5>Officer Workload</h5>
-                <canvas id="officerChart"></canvas>
+                <canvas id="officerChart" height="150"></canvas>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-
     // Status Chart
-    new Chart(document.getElementById("statusChart"), {
-        type: 'bar',
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
         data: {
             labels: {{ status_labels|safe }},
             datasets: [{
-                label: 'Complaints',
                 data: {{ status_counts|safe }},
-                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)'
+                ],
+                borderWidth: 0
             }]
         },
-        options: {}
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
     });
 
     // Region Chart
-    new Chart(document.getElementById("regionChart"), {
+    const regionCtx = document.getElementById('regionChart').getContext('2d');
+    new Chart(regionCtx, {
         type: 'bar',
         data: {
             labels: {{ region_labels|safe }},
             datasets: [{
                 label: 'Complaints',
                 data: {{ region_counts|safe }},
-                backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                backgroundColor: 'rgba(37, 99, 235, 0.8)',
+                borderRadius: 8,
+                borderSkipped: false
             }]
         },
-        options: {}
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        display: true,
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
     });
 
     // Officer Chart
-    new Chart(document.getElementById("officerChart"), {
-        type: 'bar',
+    const officerCtx = document.getElementById('officerChart').getContext('2d');
+    new Chart(officerCtx, {
+        type: 'line',
         data: {
             labels: {{ officer_labels|safe }},
             datasets: [{
                 label: 'Assigned Complaints',
                 data: {{ officer_counts|safe }},
-                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                borderColor: 'rgba(37, 99, 235, 1)',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6
             }]
         },
-        options: {}
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
     });
-
 </script>
 
 {% endblock %}

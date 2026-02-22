@@ -1,51 +1,155 @@
 {% extends "base.html" %}
+{% block title %}Officer Dashboard{% endblock %}
+
 {% block content %}
 
-<h2>Assigned Complaints</h2>
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="display-6 fw-bold text-primary">
+            <i class="fas fa-user-tie me-2"></i>Officer Dashboard
+        </h2>
+        <p class="text-muted">Manage your assigned complaints</p>
+    </div>
+    <div class="col-auto">
+        <div class="card bg-primary text-white">
+            <div class="card-body py-2">
+                <small class="text-uppercase">Active Cases</small>
+                <h4 class="mb-0">{{ complaints|length }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
 
-<table class="table table-bordered bg-white shadow-sm">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>ERT</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for c in complaints %}
-        <tr>
-            <td>{{ c.complaintId }}</td>
-            <td>{{ c.title }}</td>
-            <td> 
-                <span class="
-                    {% if c.priority == 'HIGH' %}badge bg-danger
-                    {% elif c.priority == 'MEDIUM' %}badge bg-warning text-dark
-                    {% else %}badge bg-success
-                    {% endif %}
-                ">
-                    {{ c.priority }}
-                </span>
-            </td>
-            <td>{{ c.status }}</td>
-            <td>
-                <div class="mt-2">
-                    <small>{{ c.estimated_resolution_time }}</small>
-                </div>
-            </td>
-            <td>
-                <a href="{% url 'view_complaint' c.complaintId %}" class="btn btn-secondary btn-sm">
-                    View
-                </a>
-                <a href="{% url 'officer_update_complaint' c.pk %}" class="btn btn-sm btn-primary">
-                    Update
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<!-- Quick Filters -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-2">
+        <select class="form-select" id="priorityFilter">
+            <option value="">All Priorities</option>
+            <option value="HIGH">High Priority</option>
+            <option value="MEDIUM">Medium Priority</option>
+            <option value="LOW">Low Priority</option>
+        </select>
+    </div>
+    <div class="col-md-3 mb-2">
+        <select class="form-select" id="statusFilter">
+            <option value="">All Status</option>
+            <option value="PENDING">Pending</option>
+            <option value="IN_PROCESS">In Process</option>
+            <option value="COMPLETED">Completed</option>
+        </select>
+    </div>
+    <div class="col-md-6 mb-2">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search complaints..." id="searchInput">
+            <button class="btn btn-outline-secondary" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Complaints Table -->
+<div class="card shadow">
+    <div class="card-header bg-white">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-tasks me-2"></i>Assigned Complaints
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="complaintsTable">
+                <thead>
+                    <tr>
+                        <th>Complaint ID</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>ERT</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in complaints %}
+                    <tr>
+                        <td>
+                            <span class="fw-bold text-primary">{{ c.complaintId }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ c.title }}</div>
+                            <small class="text-muted">{{ c.category }}</small>
+                        </td>
+                        <td> 
+                            <span class="badge {% if c.priority == 'HIGH' %}bg-danger{% elif c.priority == 'MEDIUM' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                {{ c.priority }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ c.status }}</span>
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ c.estimated_resolution_time|default:"N/A" }}</small>
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ c.created_at|date:"M d" }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'view_complaint' c.complaintId %}" class="btn btn-outline-primary" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'officer_update_complaint' c.pk %}" class="btn btn-outline-success" title="Update">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No complaints assigned to you.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Simple filtering functionality
+document.getElementById('priorityFilter').addEventListener('change', filterTable);
+document.getElementById('statusFilter').addEventListener('change', filterTable);
+document.getElementById('searchInput').addEventListener('keyup', filterTable);
+
+function filterTable() {
+    var priority = document.getElementById('priorityFilter').value.toUpperCase();
+    var status = document.getElementById('statusFilter').value.toUpperCase();
+    var search = document.getElementById('searchInput').value.toUpperCase();
+    
+    var table = document.getElementById('complaintsTable');
+    var tr = table.getElementsByTagName('tr');
+    
+    for (var i = 1; i < tr.length; i++) {
+        var tdPriority = tr[i].getElementsByTagName('td')[2];
+        var tdStatus = tr[i].getElementsByTagName('td')[3];
+        var tdTitle = tr[i].getElementsByTagName('td')[1];
+        
+        if (tdPriority && tdStatus && tdTitle) {
+            var priorityText = tdPriority.textContent || tdPriority.innerText;
+            var statusText = tdStatus.textContent || tdStatus.innerText;
+            var titleText = tdTitle.textContent || tdTitle.innerText;
+            
+            var showPriority = priority === '' || priorityText.toUpperCase().indexOf(priority) > -1;
+            var showStatus = status === '' || statusText.toUpperCase().indexOf(status) > -1;
+            var showSearch = search === '' || titleText.toUpperCase().indexOf(search) > -1;
+            
+            tr[i].style.display = (showPriority && showStatus && showSearch) ? '' : 'none';
+        }
+    }
+}
+</script>
 
 {% endblock %}

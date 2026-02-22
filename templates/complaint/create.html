@@ -1,9 +1,80 @@
 {% extends "base.html" %}
+{% block title %}Create Complaint{% endblock %}
+
 {% block content %}
-<h2>Create Complaint</h2>
-<form method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-success">Submit</button>
-</form>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-9 col-lg-10">
+            
+            <!-- Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h2 class="h3 fw-bold text-success mb-1">
+                        <i class="fas fa-plus-circle me-2"></i>Lodge New Complaint
+                    </h2>
+                    <p class="text-muted small mb-0">Provide details to help us resolve your issue quickly.</p>
+                </div>
+                <a href="{% url 'user_dashboard' %}" class="btn btn-light btn-sm border rounded-pill px-3">
+                    <i class="fas fa-times me-1"></i> Cancel
+                </a>
+            </div>
+
+            <!-- Compact Form Card -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="createForm" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+                            {% for field in form %}
+                            <!-- Logic: Description & Images take full width, others take half -->
+                            <div class="{% if field.name == 'description' or 'image' in field.name %}col-12{% else %}col-md-6{% endif %}">
+                                <label for="{{ field.id_for_label }}" class="form-label small fw-bold text-secondary mb-1">
+                                    {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+
+                                {% if field.field.widget.input_type == "checkbox" %}
+                                    <div class="form-check form-switch p-2 border rounded bg-light-subtle ps-5">
+                                        {{ field }}
+                                    </div>
+                                {% else %}
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-light border-end-0 text-muted">
+                                            <i class="fas {% if 'title' in field.name %}fa-pen{% elif 'category' in field.name %}fa-tag{% elif 'region' in field.name %}fa-map-marker-alt{% else %}fa-info-circle{% endif %} fa-xs"></i>
+                                        </span>
+                                        {{ field }}
+                                    </div>
+                                {% endif %}
+
+                                {% if field.errors %}
+                                    <div class="text-danger x-small mt-1 fw-bold">{{ field.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid mt-4 pt-3 border-top">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Complaint
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .input-group-sm .form-control, .input-group-sm .form-select { border-left: none !important; font-size: 0.9rem; }
+    .x-small { font-size: 0.7rem; }
+    .form-check-input { cursor: pointer; width: 2.5em; height: 1.25em; }
+</style>
+
+<script>
+    document.querySelectorAll('#createForm input, #createForm select, #createForm textarea').forEach(el => {
+        el.classList.add(el.type === 'checkbox' ? 'form-check-input' : 'form-control');
+    });
+</script>
 {% endblock %}

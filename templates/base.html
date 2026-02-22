@@ -3,62 +3,230 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CIP | {% block title %}{% endblock %}</title>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Chart.js (for later dashboards) -->
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    
     <style>
-        body {
-            background-color: #f8f9fa;
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --dark-color: #1e293b;
+            --light-bg: #f8fafc;
         }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            box-shadow: 0 2px 20px rgba(37, 99, 235, 0.1);
+        }
+
         .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+            border-radius: 15px;
+        }
+
+        .stats-card .display-4 {
+            font-weight: 700;
+        }
+
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             font-weight: 600;
         }
+
         .footer {
-            margin-top: 60px;
-            padding: 20px;
-            background: #212529;
+            margin-top: 80px;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--dark-color), #334155);
             color: white;
             text-align: center;
+        }
+
+        .footer h5 {
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #f1f5f9;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .dropdown-menu {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            padding: 0.7rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- Modern Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">Community-Issue-Portal</a>
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-users-cog me-2"></i>Community-Issue-Portal
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="nav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
 
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard_router' %}">Dashboard</a>
+                        <a class="nav-link" href="{% url 'dashboard_router' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    
+                    <!-- User Profile Dropdown -->
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar me-2">
+                                {{ user.username|first|upper }}
+                            </div>
+                            <span class="d-none d-lg-inline">{{ user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'profile_update' %}">
+                                    <i class="fas fa-user-edit me-2"></i>Update Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'tracking' %}">Track Complaint</a>
+                        <a class="nav-link" href="{% url 'tracking' %}">
+                            <i class="fas fa-search me-1"></i>Track Complaint
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white ms-2 px-3" href="{% url 'register' %}">
-                            Register
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn btn-light text-primary px-3" href="{% url 'register' %}">
+                            <i class="fas fa-user-plus me-1"></i>Register
                         </a>
                     </li>
                 {% endif %}
@@ -72,9 +240,34 @@
     {% block content %}{% endblock %}
 </div>
 
-<div class="footer">
-    © 2026 Community Issue Portal | Empowering Communities
-</div>
+<!-- Modern Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5><i class="fas fa-users-cog me-2"></i>Community Issue Portal</h5>
+                <p>Empowering communities through transparent issue resolution and citizen engagement.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'tracking' %}">Track Complaint</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Contact</h5>
+                <p><i class="fas fa-envelope me-2"></i>support@communityportal.com</p>
+                <p><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</p>
+            </div>
+        </div>
+        <hr class="my-4 bg-secondary">
+        <div class="text-center">
+            <p>&copy; 2026 Community Issue Portal | Built with <i class="fas fa-heart text-danger"></i> for communities</p>
+        </div>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

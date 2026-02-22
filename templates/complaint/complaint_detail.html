@@ -1,101 +1,165 @@
 {% extends "base.html" %}
+{% block title %}Complaint Detail{% endblock %}
+
 {% block content %}
 
-<h2>Complaint Detail</h2>
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="display-6 fw-bold text-primary">
+            <i class="fas fa-clipboard-list me-2"></i>Complaint Detail
+        </h2>
+    </div>
+    <div class="col-auto">
+        <a href="{% if request.user.userprofile.role == 'ADMIN' %}{% url 'admin_complaint_list' %}{% else %}{% url 'user_dashboard' %}{% endif %}" 
+           class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back
+        </a>
+    </div>
+</div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
-
-        <h5 class="mb-3">
-            {{ complaint.complaintId }}
-        </h5>
-
-        <p><strong>Title:</strong> {{ complaint.title }}</p>
-        <p><strong>Description:</strong> {{ complaint.description }}</p>
-
-        <hr>
-
-        <div class="row">
-            <div class="col-md-6">
-                <p><strong>Region:</strong> {{ complaint.region.name }}</p>
-                <p><strong>Category:</strong> {{ complaint.category }}</p>
-                <p><strong>Status:</strong>
-                    <span class="badge bg-primary">
-                        {{ complaint.status }}
-                    </span>
-                </p>
+<!-- Main Complaint Card -->
+<div class="card shadow-lg mb-4">
+    <div class="card-header bg-primary text-white">
+        <div class="row align-items-center">
+            <div class="col">
+                <h4 class="mb-0">
+                    <i class="fas fa-tag me-2"></i>{{ complaint.complaintId }}
+                </h4>
             </div>
-
-            <div class="col-md-6">
-                <p><strong>Created By:</strong>
-                    {{ complaint.created_by.username }}
-                </p>
-                <p><strong>Assigned To:</strong>
-                    {% if complaint.assigned_to %}
-                        {{ complaint.assigned_to.username }}
-                    {% else %}
-                        Not Assigned
-                    {% endif %}
-                </p>
-                <p><strong>Last Action By:</strong>
-                    {% if complaint.action_by %}
-                        {{ complaint.action_by.username }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </p>
+            <div class="col-auto">
+                <span class="badge bg-light text-primary fs-6">{{ complaint.status }}</span>
             </div>
         </div>
-
+    </div>
+    
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-8">
+                <h5 class="text-primary mb-3">{{ complaint.title }}</h5>
+                <p class="lead text-dark">{{ complaint.description }}</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-map-marker-alt text-danger me-2"></i>Region:</strong> {{ complaint.region.name }}</p>
+                        <p><strong><i class="fas fa-layer-group text-info me-2"></i>Category:</strong> {{ complaint.category }}</p>
+                        <p><strong><i class="fas fa-exclamation-triangle text-warning me-2"></i>Priority:</strong> 
+                            <span class="badge {% if complaint.priority == 'HIGH' %}bg-danger{% elif complaint.priority == 'MEDIUM' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                {{ complaint.priority }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-user text-primary me-2"></i>Created By:</strong> {{ complaint.created_by.username }}</p>
+                        <p><strong><i class="fas fa-user-tie text-success me-2"></i>Assigned To:</strong>
+                            {% if complaint.assigned_to %}
+                                {{ complaint.assigned_to.username }}
+                            {% else %}
+                                <span class="text-muted">Not Assigned</span>
+                            {% endif %}
+                        </p>
+                        <p><strong><i class="fas fa-calendar text-secondary me-2"></i>Created:</strong> {{ complaint.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="bg-light p-3 rounded border">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3">ML Predictions</h6>
+                    <p class="mb-2"><strong>Estimated Resolution:</strong> <br>
+                        <span class="text-primary">{{ complaint.estimated_resolution_time|default:"Calculating..." }}</span>
+                    </p>
+                    <p class="mb-2"><strong>Priority Score:</strong> 
+                        <span class="badge bg-dark">{{ complaint.ml_priority_score|floatformat:2|default:"N/A" }}</span>
+                    </p>
+                    {% if complaint.season_tag %}
+                        <p class="mb-0"><strong>Season Factor:</strong> <span class="badge bg-secondary">{{ complaint.season_tag }}</span></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
         {% if complaint.remarks %}
-        <hr>
-        <p><strong>Latest Remarks:</strong></p>
-        <div class="alert alert-secondary">
-            {{ complaint.remarks }}
+        <div class="mt-4">
+            <h6 class="text-muted fw-bold"><i class="fas fa-comment me-2"></i>Latest Remarks:</h6>
+            <div class="alert alert-secondary border-0 mb-0">
+                {{ complaint.remarks }}
+            </div>
         </div>
         {% endif %}
-
     </div>
 </div>
-{% if complaint.complaint_image %}
-<hr>
-<p><strong>Complaint Image:</strong></p>
-<img src="{{ complaint.complaint_image.url }}"
-     class="img-fluid rounded shadow-sm"
-     width="400">
-{% endif %}
 
-{% if complaint.resolution_image %}
-<hr>
-<p><strong>Resolution Image:</strong></p>
-<img src="{{ complaint.resolution_image.url }}"
-     class="img-fluid rounded shadow-sm"
-     width="400">
-{% endif %}
-
-<!-- AUDIT LOG SECTION -->
-<div class="card shadow-sm">
-    <div class="card-header bg-dark text-white">
-        Audit History
-    </div>
-
-    <div class="card-body">
-
-        {% for log in audit_logs %}
-        <div class="mb-3 border-bottom pb-2">
-            <p>
-                <strong>{{ log.changed_by.username }}</strong>
-                <span class="text-muted">
-                    ({{ log.timestamp }})
-                </span>
-            </p>
-            <p>{{ log.change_description }}</p>
+<!-- Images Section -->
+<div class="row mb-4">
+    {% if complaint.complaint_image %}
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-image me-2 text-primary"></i>Complaint Image</h6>
+            </div>
+            <div class="card-body p-0">
+                <a href="{{ complaint.complaint_image.url }}" target="_blank">
+                    <img src="{{ complaint.complaint_image.url }}" class="img-fluid rounded-bottom w-100" style="height: 300px; object-fit: cover;">
+                </a>
+            </div>
         </div>
-        {% empty %}
-        <p>No audit history available.</p>
-        {% endfor %}
+    </div>
+    {% endif %}
 
+    {% if complaint.resolution_image %}
+    <div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-check-circle me-2 text-success"></i>Resolution Image</h6>
+            </div>
+            <div class="card-body p-0">
+                <a href="{{ complaint.resolution_image.url }}" target="_blank">
+                    <img src="{{ complaint.resolution_image.url }}" class="img-fluid rounded-bottom w-100" style="height: 300px; object-fit: cover;">
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Audit History -->
+<div class="card shadow mb-4">
+    <div class="card-header bg-dark text-white">
+        <h6 class="mb-0">
+            <i class="fas fa-history me-2"></i>Audit History
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="timeline">
+            {% for log in audit_logs %}
+            <div class="timeline-item mb-3 pb-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong class="text-primary">{{ log.changed_by.username }}</strong>
+                        <p class="mb-1 text-dark">{{ log.change_description }}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ log.timestamp|date:"M d, Y H:i" }}
+                        </small>
+                    </div>
+                    <span class="badge bg-secondary">{{ log.action_type|default:"UPDATE" }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4">
+                <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
+                <p class="text-muted">No audit history available.</p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
+
+<style>
+    .timeline-item:last-child {
+        border-bottom: none !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+</style>
 
 {% endblock %}

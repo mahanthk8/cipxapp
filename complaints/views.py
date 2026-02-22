@@ -69,10 +69,10 @@ def create_complaint(request):
 
 @login_required
 @role_required('USER')
-def edit_complaint(request, complaint_id):
+def edit_complaint(request, complaintId):
     complaint = get_object_or_404(
         Complaint,
-        complaintId=complaint_id,
+        complaintId=complaintId,
         created_by=request.user
     )
 

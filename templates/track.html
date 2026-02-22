@@ -1,35 +1,109 @@
 {% extends "base.html" %}
-{% block title %}Track Complaint{% endblock %}
+{% block title %}Track Complaint | Community Issue Portal{% endblock %}
 
 {% block content %}
 
-<h2 class="mb-4">Track Your Complaint</h2>
-
-<form method="post" class="card p-4 shadow-sm">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label class="form-label">Complaint ID</label>
-        <input type="text" name="complaint_id" class="form-control" placeholder="CMPC12345678" required>
-    </div>
-    <button class="btn btn-primary">Track</button>
-</form>
-
-{% if complaint %}
-<div class="card mt-4 shadow-sm">
-    <div class="card-body">
-        <h5>{{ complaint.complaintId }}</h5>
-        <p><strong>Status:</strong> 
-            <span class="badge bg-info">{{ complaint.status }}</span>
+<!-- Page Header -->
+<div class="row justify-content-center mb-5">
+    <div class="col-lg-8 text-center">
+        <h1 class="display-5 fw-bold text-primary mb-3">Track Your Complaint</h1>
+        <p class="lead text-secondary">
+            Enter your complaint ID to view real-time status and updates.
         </p>
-        <p><strong>Category:</strong> {{ complaint.category }}</p>
-        <p><strong>Remarks:</strong> {{ complaint.remarks }}</p>
-        <p><strong>Last Updated:</strong> {{ complaint.updated_at }}</p>
     </div>
 </div>
-{% elif error %}
-<div class="alert alert-danger mt-4">
-    {{ error }}
+
+<!-- Tracking Form -->
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card dashboard-card border-0 shadow-lg">
+            <div class="card-body p-4 p-md-5">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label for="complaint_id" class="form-label fw-semibold text-dark">
+                            Complaint ID
+                        </label>
+                        <input 
+                            type="text" 
+                            name="complaint_id" 
+                            id="complaint_id"
+                            class="form-control form-control-lg rounded-pill shadow-sm"
+                            placeholder="e.g. CMPC26123456"
+                            required
+                            autofocus
+                        >
+                        <div class="form-text text-muted mt-2">
+                            You received this ID when you raised the complaint.
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                            <i class="fas fa-search me-2"></i> Track Complaint
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Result / Error -->
+        {% if complaint %}
+        <div class="card mt-5 shadow-lg border-0 overflow-hidden">
+            <div class="card-header bg-gradient text-white py-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">{{ complaint.complaintId }}</h5>
+                    <span class="badge bg-light text-primary fs-6 px-3 py-2">
+                        {{ complaint.status|default:"Pending" }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <div class="row g-4">
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small fw-semibold">Category</p>
+                        <p class="fs-5 mb-0">{{ complaint.category|default:"—" }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small fw-semibold">Last Updated</p>
+                        <p class="fs-5 mb-0">{{ complaint.updated_at|date:"d M Y, H:i" }}</p>
+                    </div>
+                </div>
+
+                {% if complaint.remarks %}
+                <hr class="my-4">
+                <p class="mb-1 text-muted small fw-semibold">Latest Remarks</p>
+                <p class="fs-5 mb-0">{{ complaint.remarks }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% elif error %}
+        <div class="alert alert-danger alert-dismissible fade show mt-4 shadow-sm" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+    </div>
 </div>
-{% endif %}
+
+<style>
+    .bg-gradient {
+        background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+    }
+    .form-control-lg.rounded-pill {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+    }
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+    }
+    .card-header {
+        border-bottom: none;
+    }
+</style>
 
 {% endblock %}

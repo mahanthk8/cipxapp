@@ -1,36 +1,151 @@
 {% extends "base.html" %}
+{% block title %}Update Assigned Officer{% endblock %}
+
 {% block content %}
-
-<h2 class="mb-4">Update Profile</h2>
-
-<div class="card shadow-sm">
-    <div class="card-body">
-
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label>Username</label>
-                {{ form.assigned_to }}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-7 col-lg-9">
+            
+            <!-- Modern Header Section -->
+            <div class="text-center mb-5 animate__animated animate__fadeInDown">
+                <div class="icon-box d-inline-block bg-primary-soft rounded-circle mb-3">
+                    <i class="fas fa-user-cog fa-3x text-primary p-3"></i>
+                </div>
+                <h1 class="display-5 fw-extrabold text-dark mb-2">Update Assigned Officer</h1>
+                <p class="text-muted mx-auto" style="max-width: 500px;">
+                    Manage officer assignment for this complaint.
+                </p>
             </div>
 
-            <div class="mb-3">
-                <label>Status</label>
-                {{ form.status }}
+            <!-- Modern Form Card -->
+            <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+                <div class="card-header bg-white border-0 pt-4 px-4 px-md-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="badge bg-primary-soft text-primary px-3 py-2 rounded-pill small">
+                            <i class="fas fa-id-badge me-1"></i> Complaint 
+                        </span>
+                        <small class="text-muted">Account updates</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" id="profileUpdateForm" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row g-4">
+                            <!-- Username / Assigned To -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase tracking-wider text-secondary mb-1">
+                                    Username / Assignment
+                                </label>
+                                <div class="input-group input-group-modern">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-user fa-xs"></i>
+                                    </span>
+                                    {{ form.assigned_to }}
+                                </div>
+                                {% if form.assigned_to.errors %}
+                                    <div class="text-danger x-small mt-1 fw-bold">{{ form.assigned_to.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Status Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase tracking-wider text-secondary mb-1">
+                                    Account Status
+                                </label>
+                                <div class="input-group input-group-modern">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-signal fa-xs"></i>
+                                    </span>
+                                    {{ form.status }}
+                                </div>
+                                {% if form.status.errors %}
+                                    <div class="text-danger x-small mt-1 fw-bold">{{ form.status.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Remarks (Full Width) -->
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-uppercase tracking-wider text-secondary mb-1">
+                                    Remarks / Notes
+                                </label>
+                                <div class="input-group input-group-modern">
+                                    <span class="input-group-text bg-light border-end-0 text-muted align-items-start pt-3">
+                                        <i class="fas fa-comment-alt fa-xs"></i>
+                                    </span>
+                                    {{ form.remarks }}
+                                </div>
+                                {% if form.remarks.help_text %}
+                                    <div class="form-text x-small mt-2"><i class="fas fa-info-circle me-1"></i>{{ form.remarks.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row g-3 mt-5 pt-3 border-top">
+                            <div class="col-md-8">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill shadow-primary hover-lift">
+                                    <i class="fas fa-save me-2"></i> Update Assignment
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="javascript:history.back()" class="btn btn-light btn-lg w-100 rounded-pill border">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label>Remarks</label>
-                {{ form.remarks }}
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                Update Profile
-            </button>
-
-        </form>
-
+        </div>
     </div>
 </div>
 
+<style>
+    :root { --primary-soft: rgba(13, 110, 253, 0.1); }
+    body { background-color: #f8fafc; }
+    .bg-primary-soft { background-color: var(--primary-soft); }
+    .fw-extrabold { font-weight: 800; }
+    .tracking-wider { letter-spacing: 0.05em; font-size: 0.7rem; }
+    .x-small { font-size: 0.75rem; }
+
+    /* Modern Input Styling */
+    .input-group-modern .form-control, .input-group-modern .form-select {
+        border-radius: 0 12px 12px 0 !important;
+        padding: 10px 15px;
+        background-color: #fcfcfc;
+        border-left: none;
+        font-size: 0.95rem;
+    }
+    .input-group-modern .input-group-text {
+        border-radius: 12px 0 0 12px !important;
+        border-right: none;
+        padding-left: 15px;
+    }
+    .form-control:focus {
+        background-color: #fff;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+    }
+
+    /* Button Effects */
+    .hover-lift { transition: all 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(13, 110, 253, 0.25) !important; }
+    .shadow-primary { box-shadow: 0 4px 14px 0 rgba(13, 110, 253, 0.35); }
+</style>
+
+<script>
+    // Injects classes to Django fields automatically
+    document.querySelectorAll('#profileUpdateForm input, #profileUpdateForm select, #profileUpdateForm textarea').forEach(el => {
+        el.classList.add('form-control');
+    });
+
+    // Handle Loading State on Submit
+    document.getElementById('profileUpdateForm').addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving Changes...';
+        btn.classList.add('disabled');
+    });
+</script>
 {% endblock %}

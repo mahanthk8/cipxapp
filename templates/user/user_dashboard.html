@@ -1,70 +1,128 @@
 {% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+
 {% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="display-6 fw-bold text-primary">
+            <i class="fas fa-user me-2"></i>My Dashboard
+        </h2>
+        <p class="text-muted">Track and manage your complaints</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'create_complaint' %}" class="btn btn-success btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>New Complaint
+        </a>
+    </div>
+</div>
 
-<h2>My Complaints</h2>
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                <h4>{{ stats.total }}</h4>
+                <p class="mb-0">Total Complaints</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <h4>{{ stats.pending }}</h4>
+                <p class="mb-0">Pending</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-cog fa-2x mb-2"></i>
+                <h4>{{ stats.process }}</h4>
+                <p class="mb-0">In Process</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <h4>{{ stats.completed }}</h4>
+                <p class="mb-0">Completed</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<a href="{% url 'create_complaint' %}" class="btn btn-success mb-3">
-    + New Complaint
-</a> 
+<!-- Complaints Table -->
+<div class="card shadow">
+    <div class="card-header bg-white">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>My Complaints
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>ERT</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in complaints %}
+                    <tr>
+                        <td><span class="fw-bold text-primary">{{ c.complaintId }}</span></td>
+                        <td>
+                            <div class="fw-semibold">{{ c.title }}</div>
+                            <small class="text-muted">{{ c.category }}</small>
+                        </td>
+                        <td> 
+                            <span class="badge {% if c.priority == 'HIGH' %}bg-danger{% elif c.priority == 'MEDIUM' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                {{ c.priority }}
+                            </span>
+                        </td>
+                        <td><span class="badge bg-info">{{ c.status }}</span></td>
+                        <td><small class="text-muted">{{ c.estimated_resolution_time|default:"N/A" }}</small></td>
+                        <td><small class="text-muted">{{ c.created_at|date:"M d, Y" }}</small></td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'view_complaint' c.complaintId %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if c.status == "PENDING" %}
+                                    <a href="{% url 'edit_complaint' c.complaintId %}" class="btn btn-outline-warning btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No complaints yet. Create your first complaint!</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-<table class="table table-bordered bg-white shadow-sm">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>ERT</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for c in complaints %}
-        <tr>
-            <td>{{ c.complaintId }}</td>
-            <td>{{ c.title }}</td>
-            <td> 
-                <span class="
-                    {% if c.priority == 'HIGH' %}badge bg-danger
-                    {% elif c.priority == 'MEDIUM' %}badge bg-warning text-dark
-                    {% else %}badge bg-success
-                    {% endif %}
-                ">
-                    {{ c.priority }}
-                </span>
-        </td>
-            <td>
-                <span class="badge bg-info">{{ c.status }}</span>
-            </td>
-            <td>
-                <div class="mt-2">
-                    <small>{{ c.estimated_resolution_time }}</small>
-                </div>
-            </td>
-            <td>
-                <a href="{% url 'view_complaint' c.complaintId %}" class="btn btn-secondary btn-sm">
-                View
-            </a>
-                &nbsp;&nbsp;
-                {% if c.status == "PENDING" %}
-                    <a href="{% url 'edit_complaint' c.complaintId %}" class="btn btn-sm btn-warning">
-                        Edit
-                    </a>
-                {% else %}
-                    &nbsp;&nbsp;&nbsp;-
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4">No complaints yet.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<a href="{% url 'profile_update' %}" class="btn btn-secondary">
-    Update Profile
-</a>
-
+<div class="text-center mt-4">
+    <a href="{% url 'profile_update' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-user-edit me-2"></i>Update Profile
+    </a>
+</div>
 {% endblock %}
