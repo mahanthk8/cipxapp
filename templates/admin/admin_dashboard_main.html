@@ -84,12 +84,37 @@
 
 </div>
 
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card shadow">
+<div class="row mb-5">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white shadow">
             <div class="card-body">
-                <h5>Total Officers: {{ total_officers }}</h5>
-                <h5>Total Regions: {{ total_regions }}</h5>
+                <h3>Total Officers: {{ total_officers }}</h3>
+                <h3>Total Regions: {{ total_regions }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-danger text-white shadow">
+            <div class="card-body">
+                <h3>Priority Distribution</h3>
+                <ul>
+                    {% for item in priority_stats %}
+                        <li>{{ item.priority }} : {{ item.total }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-secondary text-white shadow">
+            <div class="card-body">
+                <h3>Season Distribution</h3>
+                <ul>
+                {% for item in season_stats %}
+                    <li>{{ item.season_tag }} : {{ item.total }}</li>
+                {% endfor %}
+                </ul>
             </div>
         </div>
     </div>

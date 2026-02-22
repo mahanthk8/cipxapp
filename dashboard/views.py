@@ -1,5 +1,10 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Avg, Q
+from users.decorators import role_required
+from complaints.models import Complaint
+from users.models import User
+from regions.models import Region
 
 
 @login_required
@@ -14,11 +19,34 @@ def dashboard_router(request):
 
 # FILE: dashboard/views.py
 
-from django.db.models import Count
-from users.decorators import role_required
-from complaints.models import Complaint
-from users.models import User
-from regions.models import Region
+def admin_analytics(request):
+
+    priority_stats = Complaint.objects.values('priority').annotate(
+        total=Count('id')
+    )
+
+    season_stats = Complaint.objects.values('season_tag').annotate(
+        total=Count('id')
+    )
+
+    officer_performance = User.objects.filter(role='OFFICER').annotate(
+        completed_count=Count(
+            'assigned_complaints',
+            filter=Q(assigned_complaints__status="COMPLETED")
+        )
+    ).order_by('-star')
+
+    context = {
+        "priority_stats": priority_stats,
+        "season_stats": season_stats,
+        "officer_performance": officer_performance
+    }
+
+    return render(request, "admin/analytics.html", context)
+
+
+
+
 
 
 @login_required
@@ -55,26 +83,31 @@ def admin_dashboard_main(request):
     region_labels = [item['region__name'] for item in region_data]
     region_counts = [item['count'] for item in region_data]
 
-    # ---- Officer Workload ----
-    # officer_data = (
-    #     User.objects
-    #     .filter(role='OFFICER')
-    #     .annotate(
-    #         workload=Count(
-    #             'assigned_complaints',
-    #             filter=Count('assigned_complaints')
-    #         )
-    #     )
-    # )
+    
     from django.db.models import Count as dcount, Case, When, IntegerField
     officer_data = User.objects.filter(role='OFFICER').annotate(
     workload=dcount(
-        Case(
-            When(assigned_complaints__status='PENDING', then=1),
-            output_field=IntegerField(),
+            Case(
+                When(assigned_complaints__status='PENDING', then=1),
+                output_field=IntegerField(),
+            )
         )
     )
-)
+
+    priority_stats = Complaint.objects.values('priority').annotate(
+        total=Count('id')
+    )
+
+    season_stats = Complaint.objects.values('season_tag').annotate(
+        total=Count('id')
+    )
+
+    officer_performance = User.objects.filter(role='OFFICER').annotate(
+        completed_count=Count(
+            'assigned_complaints',
+            filter=Q(assigned_complaints__status="COMPLETED")
+        )
+    ).order_by('-star')
 
     officer_labels = [o.username for o in officer_data]
     officer_counts = [o.assigned_complaints.count() for o in officer_data]
@@ -96,6 +129,9 @@ def admin_dashboard_main(request):
 
         'officer_labels': officer_labels,
         'officer_counts': officer_counts,
+        "priority_stats": priority_stats,
+        "season_stats": season_stats,
+        "officer_performance": officer_performance
     }
 
     return render(request, 'admin/admin_dashboard_main.html', context)

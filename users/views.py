@@ -79,11 +79,14 @@ def profile_update(request):
 
 # < -- offier views -- >
 
+from django.db.models import Count, Q
+
 @login_required
 @role_required('OFFICER')
 def officer_dashboard(request):
     complaints = request.user.assigned_complaints.all()
-    return render(request, 'officer/officer_dashboard.html', {'complaints': complaints})
+    context = {"complaints": complaints}
+    return render(request, 'officer/officer_dashboard.html', context)
 
 
 # < -- Admin Views for Officer Management -->
@@ -93,7 +96,14 @@ def officer_dashboard(request):
 def officer_list(request):
     User = get_user_model()
     officers = User.objects.filter(role='OFFICER')
-    return render(request, 'admin/officer_list.html', {'officers': officers})
+    active_counts = {}
+    for officer in officers:
+        active_counts[officer.id] = officer.assigned_complaints.filter(
+            status__in=["PENDING", "IN_PROCESS"]
+        ).count()
+    for officer in officers:
+        officer.active_cases = active_counts.get(officer.id, 0)
+    return render(request, 'admin/officer_list.html', {'officers': officers, 'active_counts': active_counts})
 
 
 @login_required

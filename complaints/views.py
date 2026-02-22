@@ -5,7 +5,16 @@ from django.contrib.auth.decorators import login_required
 from .models import Complaint
 from .forms import ComplaintForm, ComplaintAssignForm, OfficerUpdateForm
 from users.decorators import role_required
-from .services import auto_assign_complaint
+from .services import auto_assign_complaint, enrich_complaint_with_ai
+
+### Predictions for complaints
+
+from predictions.services import (
+    predict_priority,
+    estimate_resolution_time,
+    smart_officer_assignment,
+    detect_season
+)
 
 def tracking_view(request):
     context = {}
@@ -32,11 +41,24 @@ def create_complaint(request):
             complaint = form.save(commit=False)
             complaint.created_by = request.user
             complaint.action_by = request.user
+            # 🔥 Prediction Layer
+            priority = predict_priority(complaint.description)
+            print(f"RB Predicted Priority: {priority}")
+            complaint.priority = priority
+            complaint.estimated_resolution_time = estimate_resolution_time(priority)
+            print(f"RB Estimated Resolution Time: {complaint.estimated_resolution_time}")
+            complaint.season_tag = detect_season()
+            enrich_complaint_with_ai(complaint)  # Optional: Add ML predictions to complaint fields
+
+            # ⭐ Smart Assignment
+            officer = smart_officer_assignment(priority)
+            complaint.assigned_to = officer
+            # saving
             complaint.save()
             messages.success(request, "Complaint created successfully.")
 
-            # AUTO ASSIGN
-            auto_assign_complaint(complaint)
+            # AUTO ASSIGN LOGIC (REPLACED BY SMART ASSIGNMENT)
+            # auto_assign_complaint(complaint)
 
             return redirect('user_dashboard')
     else:
@@ -249,3 +271,7 @@ def admin_dashboard_main_v2(request):
     }
 
     return render(request, 'admin/admin_dashboard_main_v2.html', context)
+
+### Predictions for complaints
+
+

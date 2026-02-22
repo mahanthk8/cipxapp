@@ -28,3 +28,33 @@ def auto_assign_complaint(complaint):
         return officer
 
     return None
+
+
+from ml_engine.services import (
+    predict_priority,
+    predict_resolution
+)
+from django.utils import timezone
+
+
+def enrich_complaint_with_ai(complaint):
+    """
+    Auto-assign ML predictions to complaint
+    """
+
+    data_dict = {
+        "category": complaint.category,
+        "region": complaint.region.name if complaint.region else None,
+        "month": timezone.now().month,
+        "day_of_week": timezone.now().weekday(),
+        "is_weekend": 1 if timezone.now().weekday() >= 5 else 0,
+    }
+
+    # Predict
+    # complaint.predicted_priority = predict_priority(data_dict)
+    # complaint.predicted_resolution = predict_resolution(data_dict)
+    pp = predict_priority(data_dict)
+    pr = predict_resolution(data_dict)
+
+    # complaint.save()
+    print(f"ML Predicted Priority: {pp}, ML Predicted Resolution: {pr}")    

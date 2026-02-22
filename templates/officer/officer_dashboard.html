@@ -8,7 +8,9 @@
         <tr>
             <th>ID</th>
             <th>Title</th>
+            <th>Priority</th>
             <th>Status</th>
+            <th>ERT</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -17,7 +19,22 @@
         <tr>
             <td>{{ c.complaintId }}</td>
             <td>{{ c.title }}</td>
+            <td> 
+                <span class="
+                    {% if c.priority == 'HIGH' %}badge bg-danger
+                    {% elif c.priority == 'MEDIUM' %}badge bg-warning text-dark
+                    {% else %}badge bg-success
+                    {% endif %}
+                ">
+                    {{ c.priority }}
+                </span>
+            </td>
             <td>{{ c.status }}</td>
+            <td>
+                <div class="mt-2">
+                    <small>{{ c.estimated_resolution_time }}</small>
+                </div>
+            </td>
             <td>
                 <a href="{% url 'view_complaint' c.complaintId %}" class="btn btn-secondary btn-sm">
                     View

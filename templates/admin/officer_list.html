@@ -13,6 +13,7 @@
             <th>Name</th>
             <th>Region</th>
             <th>Star</th>
+            <th>Active Workload</th>
             <th>Status</th>
             <th>Action</th>
         </tr>
@@ -23,6 +24,7 @@
             <td>{{ o.username }}</td>
             <td>{{ o.region }}</td>
             <td>⭐ {{ o.star }}</td>
+            <td>{{ o.active_cases }}</td>
             <td>
                 {% if o.is_active %}
                     <span class="badge bg-success">Active</span>

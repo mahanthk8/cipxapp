@@ -24,6 +24,12 @@ class Complaint(models.Model):
         ('REJECTED', 'Rejected'),
     ]
 
+    PRIORITY_CHOICES = [
+        ('HIGH', 'High'),
+        ('MEDIUM', 'Medium'),
+        ('LOW', 'Low'),
+    ]
+
     complaintId = models.CharField(max_length=12, unique=True, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -59,6 +65,25 @@ class Complaint(models.Model):
         null=True,
         blank=True,
         related_name='actions'
+    )
+
+    priority = models.CharField(
+        max_length=10,
+        choices=PRIORITY_CHOICES,
+        blank=True,
+        null=True
+    )
+
+    estimated_resolution_time = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    season_tag = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True
     )
 
     remarks = models.TextField(blank=True, null=True)
